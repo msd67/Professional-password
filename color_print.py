@@ -5,7 +5,6 @@
 import sys
 import os
 
-print('color print\n')
 
 # windows system coloer
 # 0 = Black       8 = Gray
@@ -40,12 +39,11 @@ class bcolors:
     BOLD    = "\033[;1m"
     REVERSE = "\033[;7m"
 
-print(bcolors.WARNING + "Warning: No active frommets remain. Continue?" + bcolors.ENDC)
-
-print(f"{bcolors.WARNING}Warning: No active frommets remain. Continue?{bcolors.ENDC}")
-
-print(bcolors.GREEN + "Warning: No active frommets remain. Continue?" + bcolors.ENDC)
-
-print(bcolors.CYAN + "Warning: No active frommets remain. Continue?" + bcolors.ENDC)
-
-print("Warning: No active frommets remain. Continue?")
+    def clear():
+        # for windows
+        if os.name == 'nt':
+            _ = os.system('cls')
+        
+        # for mac and linux (here, os.name is 'posix')
+        else:
+            _ = os.system('clear')
