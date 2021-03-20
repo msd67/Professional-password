@@ -13,9 +13,10 @@ install() {
 }
 
 localdir() {
-	mkdir -p bin etc lib man share
+	mkdir -p "$lclAdd/bin" "$lclAdd/etc" "$lclAdd/lib" "$lclAdd/man" "$lclAdd/share"
 }
 
+lclAdd="$HOME/.local"
 libAdd="$HOME/.local/lib"
 binAdd="$HOME/.local/bin"
 dbAdd="$HOME/.local/etc/pwordpro"
