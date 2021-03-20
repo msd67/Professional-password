@@ -13,6 +13,8 @@ class accountjob:
         self._username = ""
         self._passwd = ""
         self._truePasswd = ""
+        self._homedir = os.path.expanduser('~')
+        self._accountAdd = self._homedir + '/.local/etc/pwordpro/account'
     
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -20,11 +22,11 @@ class accountjob:
         return cls.instance
 
     def _accountCheck(self):
-        if not os.path.exists('account'):
-            with open('account', 'w') as fp:
+        if not os.path.exists(self._accountAdd):
+            with open(self._accountAdd, 'w') as fp:
                 fp.write('')
             return False
-        with open('account') as f:
+        with open(self._accountAdd) as f:
             lines = f.readlines()
             for line in lines:
                 acc = line.split(':')
@@ -59,7 +61,7 @@ class accountjob:
         self._setUser(accnt["user"])
         if self._accountCheck()==False:
             line = accnt["user"] + ":" + accnt["psswd"] + ":\n"
-            with open("account", 'a') as f:
+            with open(self._accountAdd, 'a') as f:
                 f.write(line)
             return True
         return False

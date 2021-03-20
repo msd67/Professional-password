@@ -9,6 +9,11 @@ import hashmake as hm
 import color_print as clp
 import UserInterface as ui
 
+import os.path as op
+import os
+homedir = op.expanduser('~')
+os.chdir(homedir + '/.local/etc/pwordpro')
+
 
 uaccount = ua.accountjob()
 hDrive = hm.hashing()

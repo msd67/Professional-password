@@ -13,7 +13,8 @@ class sqldrive():
     def __init__(self) -> None:
         self._tableName = 'passwords'
         self._tableBase = 'passwords'
-        self._dbName = 'securityPass.db'
+        self._homedir = op.expanduser('~')
+        self._dbName = self._homedir + '/.local/etc/pwordpro/securityPass.db'
         self._keySrch = ''
         self._record = ''
         self._dataTable = []

@@ -4,6 +4,7 @@
 
 import getpass
 import pandas as pd
+import os
 
 class userinterface():
 
@@ -11,6 +12,8 @@ class userinterface():
         self._dencrypt = None
         self._dbDrive = None
         self._uname = ''
+        self._homedir = os.path.expanduser('~')
+        self._dirnameKey = self._homedir + '/.local/etc/pwordpro'
     
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -149,7 +152,7 @@ class userinterface():
             return False
 
     def writeSecretKey(self, key: str):
-        keyFileName = 'SecPassKey_' + self._uname
+        keyFileName = self._dirnameKey + '/SecPassKey_' + self._uname
         with open(keyFileName, 'w') as f:
             f.write(key)
 
