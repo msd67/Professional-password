@@ -2,6 +2,8 @@
 # useraccount
 # created by masoud mahjoubi
 
+import os.path
+
 def introModule():
     print("useraccount")
 
@@ -18,6 +20,10 @@ class accountjob:
         return cls.instance
 
     def _accountCheck(self):
+        if not os.path.exists('account'):
+            with open('account', 'w') as fp:
+                fp.write('')
+            return False
         with open('account') as f:
             lines = f.readlines()
             for line in lines:

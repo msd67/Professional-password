@@ -12,11 +12,13 @@ class sqldrive():
 
     def __init__(self) -> None:
         self._tableName = 'passwords'
+        self._tableBase = 'passwords'
         self._dbName = 'securityPass.db'
         self._keySrch = ''
         self._record = ''
         self._dataTable = []
         self._numReco = None
+        self._username = None
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -82,6 +84,10 @@ class sqldrive():
 
     def _setRecord(self, rcrd):
         self._record = rcrd
+    
+    def _setUserName(self, uname: str):
+        self._username = uname
+        self._tableName = self._tableBase + '_' + self._username
 
     def _numberOfRecords(self, conn):
         comm = self._commCreate('numberOfRecords', '')

@@ -3,12 +3,14 @@
 # created by masoud mahjoubi
 
 import getpass
+import pandas as pd
 
 class userinterface():
 
     def __init__(self) -> None:
         self._dencrypt = None
         self._dbDrive = None
+        self._uname = ''
     
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -21,20 +23,30 @@ class userinterface():
     def set_DataBaseDrive(self, db):
         self._dbDrive = db
     
+    def setUserName(self, uname):
+        self._uname = uname
+    
     def _questionnaire(self)->dict:
         accountInfo = {}
         accountInfo['id'] = input('Enter ID: ')
         accountInfo['key'] = input('Enter KEYWORD: ')
         accountInfo['user'] = input('Enter USERNAME: ')
-        psswdAcc = getpass.getpass()
-        accountInfo['pass'] = self._dencrypt.encryptMessage(psswdAcc)
+        psswdAcc_1 = getpass.getpass()
+        psswdAcc_2 = getpass.getpass()
+        if psswdAcc_1!=psswdAcc_2:
+            return False
+        accountInfo['pass'] = self._dencrypt.encryptMessage(psswdAcc_1)
         accountInfo['link'] = input('Enter LINK: ')
         accountInfo['describe'] = input('Enter some DESCRIBE: ')
         return accountInfo
     
     def _insertHandle(self):
         newRecord = self._questionnaire()
-        self._dbDrive.insertData(newRecord)
+        if newRecord!=False:
+            self._dbDrive.insertData(newRecord)
+            return True
+        else:
+            return False
     
     def _searchHandle(self):
         options = ['ID', 'KYW', 'USER', 'PASS', 'LINK']
@@ -90,15 +102,55 @@ class userinterface():
                 print('Link: \t\t', row[4])
                 print('Description: \t', row[5])
                 print('\n')
+    
+    def _showRecordsTable(self, records):
+        if records:
+            idL, kwL, unL, pwL = [], [], [], []
+            lnL, dpL = [], []
+            #table_Records.append(clms)
+            for row in records:
+                idL.append(row[0])
+                kwL.append(row[1])
+                unL.append(row[2])
+                pwL.append(self._dencrypt.decryptMessage(row[3]))
+                lnL.append(row[4])
+                dpL.append(row[5])
+            df = pd.DataFrame({
+                'ID':idL,
+                'Keyword':kwL,
+                'Username':unL,
+                'Password':pwL,
+                'Link':lnL,
+                'Description':dpL
+            })
+            print(df)
+    
+    def _showStatus(self):
+        ans = input('Normally or Table [N/T]: ')
+        if ans=='N' or ans=='n':
+            return 'n'
+        elif ans=='T' or ans=='t':
+            return 't'
+        else:
+            return False
 
-    def signInun(self)->dict:
+    def signInun(self, sign)->dict:
         signInfo = {}
         signInfo['username'] = input('Please enter username: ')
-        signInfo['password'] = getpass.getpass()
-        return signInfo
+        psswd_1 = getpass.getpass()
+        if sign=='signin':
+            psswd_2 = psswd_1
+        elif sign=='signup':
+            psswd_2 = getpass.getpass()
+        if psswd_1==psswd_2:
+            signInfo['password'] = psswd_1
+            return signInfo
+        else:
+            return False
 
     def writeSecretKey(self, key: str):
-        with open("SecPassKey01", 'w') as f:
+        keyFileName = 'SecPassKey_' + self._uname
+        with open(keyFileName, 'w') as f:
             f.write(key)
 
     def read_dbKey(self, keyAdd: str):
@@ -117,15 +169,25 @@ class userinterface():
     def selectionHandling(self, SO):
         if SO=='1':
             # Insert
-            self._insertHandle()
+            rslt = self._insertHandle()
+            if rslt==False:
+                print("ّInformation (ACCOUNT) not saved, Passwords may not have been the same")
+            elif rslt==True:
+                print('Information (ACCOUNT) saved')
         elif SO=='2':
             # Search
             rcd = self._searchHandle()
-            self._showRecords(rcd)
+            if self._showStatus()=='t':
+                self._showRecordsTable(rcd)
+            else:
+                self._showRecords(rcd)
         elif SO=='3':
             # Show all records
             rcd = self._showAllHandle()
-            self._showRecords(rcd)
+            if self._showStatus()=='t':
+                self._showRecordsTable(rcd)
+            else:
+                self._showRecords(rcd)
         elif SO=='4':
             # Delete
             self._deleteHandle()

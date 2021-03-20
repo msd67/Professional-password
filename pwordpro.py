@@ -30,26 +30,35 @@ userAccount = {}
 
 X = input('Signin [i] or Signup [u]? ')
 if X=='i' or X=='I':
-    userAcc = userInt.signInun()
-    hashPass = hDrive.passwordHashing(userAcc['username'])
-    userAccount['user'] = userAcc['username']
-    userAccount['psswd'] = hashPass
-    if uaccount.validationAccount(userAccount):
-        appLock = 'open'
-        dbKeyAdd = input('Enter DataBase key address file: ')
-        dbKey = userInt.read_dbKey(dbKeyAdd)
+    userAcc = userInt.signInun('signin')
+    if userAcc!=False:
+        hashPass = hDrive.passwordHashing(userAcc['password'])
+        userAccount['user'] = userAcc['username']
+        userAccount['psswd'] = hashPass
+        if uaccount.validationAccount(userAccount):
+            appLock = 'open'
+            dbKeyAdd = input('Enter DataBase key address file: ')
+            dbKey = userInt.read_dbKey(dbKeyAdd)
+            dbDrive._setUserName(userAccount['user'])
+        else:
+            print(clp.bcolors.WARNING + 'Account not exist !' + clp.bcolors.ENDC)
+            appLock = 'close'
     else:
-        print(clp.bcolors.WARNING + 'Account not exist !' + clp.bcolors.ENDC)
-        appLock = 'close'
+        print(clp.bcolors.WARNING + 'Password problem !' + clp.bcolors.ENDC)
 elif X=='u' or X=='U':
-    userAcc = userInt.signInun()
-    hashPass = hDrive.passwordHashing(userAcc['username'])
-    userAccount['user'] = userAcc['username']
-    userAccount['psswd'] = hashPass
-    uaccount.createAccount(userAccount)
-    dbKey = hDrive.keywordHashing(userAccount['user'])
-    userInt.writeSecretKey(dbKey)
-    appLock = 'open'
+    userAcc = userInt.signInun('signup')
+    if userAcc!=False:
+        hashPass = hDrive.passwordHashing(userAcc['password'])
+        userAccount['user'] = userAcc['username']
+        userAccount['psswd'] = hashPass
+        uaccount.createAccount(userAccount)
+        userInt.setUserName(userAccount['user'])
+        dbKey = hDrive.keywordHashing(userAccount['user'])
+        userInt.writeSecretKey(dbKey)
+        appLock = 'open'
+        dbDrive._setUserName(userAccount['user'])
+    else:
+        print(clp.bcolors.WARNING + 'Password problem !' + clp.bcolors.ENDC)
 else:
     print(clp.bcolors.WARNING + 'None of the options selected' + clp.bcolors.ENDC)
     appLock = 'close'
