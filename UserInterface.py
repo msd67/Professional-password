@@ -51,6 +51,14 @@ class userinterface():
         else:
             return False
     
+    def _updateHandle(self):
+        newRecord = self._questionnaire()
+        if newRecord!=False:
+            self._dbDrive.updateData(newRecord)
+            return True
+        else:
+            return False
+    
     def _searchHandle(self):
         options = ['ID', 'KYW', 'USER', 'PASS', 'LINK']
         print('1-ID, 2-KEY, 3-USER, 4-PASS, 5-LINK')
@@ -93,6 +101,9 @@ class userinterface():
                     f.write(rcd[5] + '\n')
         else:
             print('No options selected')
+    
+    def _numOfRecHandle(self):
+        return self._dbDrive.numberOfData()
 
     def _showRecords(self, records):
         if records:
@@ -167,7 +178,9 @@ class userinterface():
         print('3- Show all account')
         print('4- Delete')
         print('5- Export')
-        print('6- Exit')
+        print('6- Update Record')
+        print('7- Number of Records')
+        print('8- Exit')
     
     def selectionHandling(self, SO):
         if SO=='1':
@@ -198,6 +211,17 @@ class userinterface():
             # Export
             self._exportHandle()
         elif SO=='6':
+            # Update Record
+            rslt = self._updateHandle()
+            if rslt==False:
+                print("ّRecord not updated, Passwords may not have been the same")
+            elif rslt==True:
+                print('Record updated')
+        elif SO=='7':
+            # Number of Records
+            rslt = self._numOfRecHandle()
+            print('Number of records: ' + str(rslt))
+        elif SO=='8':
             # Exit
             print('\nExit Selected')
             exit()

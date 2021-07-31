@@ -8,20 +8,35 @@ install() {
 	cp color_print.py dencryption.py hashmake.py pwordpro.py sqliteDrive.py useraccount.py UserInterface.py validation.py "$libAdd/pwordpro"
 	echo "lib files were copied"
 	chmod u+x pwordpro
-	cp pwordpro "$binAdd"
+	cp pwordpro "$binAdd/"
 	echo "Execution file were copied"
 }
 
 localdir() {
 	mkdir -p "$lclAdd/bin" "$lclAdd/etc" "$lclAdd/lib" "$lclAdd/man" "$lclAdd/share"
+	pathmake
+}
+
+pathmake() {
+	if ! [[ "$PATH" =~ "$HOME/.local/bin:" ]]; then
+		cat pathCorrect >> "$HOME/$shll"
+	fi
 }
 
 lclAdd="$HOME/.local"
 libAdd="$HOME/.local/lib"
 binAdd="$HOME/.local/bin"
 dbAdd="$HOME/.local/etc/pwordpro"
+rc="rc"
+dot="."
+shll=`echo "$dot$SHELL$rc"`
 # selected operatioin
 slop=""
+
+distro=`cat /etc/*-release | head -n +1`
+IFS='='
+read -ra dstr <<< "$distro"
+dstr_name=${dstr[1]}
 
 while getopts ":iu" option; do
 	case $option in
@@ -78,4 +93,41 @@ else
 	echo "Unexpected problem ocurred"
 fi
 
+
+pydir="/usr/bin/python3"
+if [[ "$dstr_name" == "Ubuntu" ]] || [[ "$dstr_name" == "Debian" ]]; then
+	echo "Debian base requirement check"
+	if [[ ! -f "$pydir" ]]; then
+		echo "python3 needed to run app"
+		echo "to install python3, admin password must be entered"
+		sudo apt install python3
+	fi
+	echo "to install pip3 and some dependency admin password needed"
+	sudo apt install python3-pip &&
+		(sudo pip3 install cryptography;
+		sudo pip3 install paramiko;
+		sudo pip3 install pandas)
+elif [[ "$dstr_name" == "RedHat" ]] || [[ "$dstr_name" == "Fedora" ]] || [[ "$dstr_name" == "CentOS" ]]; then
+	echo "RedHat base requirement check"
+	if [[ ! -f "$pydir" ]]; then
+		echo "python3 needed to run app"
+		echo "to install python3, admin password must be entered"
+		sudo yum install python3
+	fi
+	sudo yum install python3-pip &&
+		(sudo pip3 install cryptography;
+		sudo pip3 install paramiko;
+		sudo pip3 install pandas)
+fi
+
 echo "The End of pwordpro_installer"
+
+
+
+
+
+
+
+
+
+

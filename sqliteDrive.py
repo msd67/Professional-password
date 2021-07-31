@@ -127,11 +127,9 @@ class sqldrive():
     def _insertProcess(self, conn):
         print('[INFO] function insertProcess')
         rcdExist = self._recordExist(conn)
-        if rcdExist==0:
-            print('[Info] Record Not Exist')
-            self._insertRecord(conn)
-        else:
+        if rcdExist!=0:
             print('[Info] Record Exist ' + str(rcdExist))
+        self._insertRecord(conn)
     
     def _updateRecords(self, conn):
         print('[INFO] function updateRecords')
@@ -144,19 +142,6 @@ class sqldrive():
         comm = self._commCreate('deleteData', '')
         conn.execute(comm)
         conn.commit()
-    
-    def insertData(self, rcd: dict):
-        self._setRecord(rcd)
-        self._setkeySearch(rcd['key'])
-        try:
-            conn = sqlite3.connect(self._dbName)
-            self._tableExist(conn)
-            self._insertProcess(conn)
-        except Exception as e:
-            print('[Err] DataBase error ocurred')
-            print(e)
-        finally:
-            conn.close()
     
     def _readAllDataProcess(self):
         try:
@@ -234,6 +219,19 @@ class sqldrive():
             self._specificDataProcess(field)
             return self._dataTable
         return []
+
+    def insertData(self, rcd: dict):
+        self._setRecord(rcd)
+        self._setkeySearch(rcd['key'])
+        try:
+            conn = sqlite3.connect(self._dbName)
+            self._tableExist(conn)
+            self._insertProcess(conn)
+        except Exception as e:
+            print('[Err] DataBase error ocurred')
+            print(e)
+        finally:
+            conn.close()
     
     def updateData(self, rcd: dict):
         self._setRecord(rcd)
